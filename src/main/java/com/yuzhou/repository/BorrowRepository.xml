@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuzhou.repository.BorrowRepository">
+    <insert  id="insert" parameterType="com.yuzhou.entity.Borrow">
+        insert into borrow(bookid,readerid,borrowtime,returntime,state) values(#{arg0},#{arg1},#{arg2},#{arg3},0)
+    </insert>
+
+    <resultMap id="BorrowMap" type="com.yuzhou.entity.Borrow">
+        <id column="id" property="id"></id>
+        <result column="borrowtime" property="borrowTime"></result>
+        <result column="returntime" property="returnTime"></result>
+        <result column="state" property="state"></result>
+        <collection property="readers" ofType="com.yuzhou.entity.Reader">
+            <id column="rname" property="name"></id>
+            <result column="tel" property="tel"></result>
+            <result column="cardid" property="cardId"></result>
+        </collection>
+        <collection property="books" ofType="com.yuzhou.entity.Book">
+            <id column="bname" property="name"></id>
+            <result column="author" property="author"></result>
+            <result column="publish" property="publish"></result>
+        </collection>
+    </resultMap>
+
+    <select id="findAllByReaderId" resultMap="BorrowMap">
+        select br.id id,b.name bname,b.author author,b.publish publish,br.borrowtime borrowtime,br.returntime returntime,r.name rname,r.tel tel,r.cardid cardid,br.state state from borrow br ,book b,reader r where readerid = #{arg0} and b.id = br.bookid and r.id = br.readerid limit #{arg1},#{arg2}
+    </select>
+
+    <select id="count" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(*) from borrow br,book b,reader r where readerid = #{readerid} and b.id = br.bookid and r.id = br.readerid
+    </select>
+
+
+    <resultMap id="BorrowMap1" type="com.yuzhou.entity.Borrow">
+        <id column="id" property="id"></id>
+        <result column="borrowtime" property="borrowTime"></result>
+        <result column="returntime" property="returnTime"></result>
+        <result column="state" property="state"></result>
+        <collection property="readers" ofType="com.yuzhou.entity.Reader">
+            <id column="rname" property="name"></id>
+            <result column="tel" property="tel"></result>
+            <result column="cardid" property="cardId"></result>
+        </collection>
+        <collection property="books" ofType="com.yuzhou.entity.Book">
+            <id column="bname" property="name"></id>
+            <result column="author" property="author"></result>
+            <result column="publish" property="publish"></result>
+        </collection>
+    </resultMap>
+
+    <select id="findAllByState" resultMap="BorrowMap1">
+        select br.id id,b.name bname,b.author author,b.publish publish,br.borrowtime borrowtime,br.returntime returntime,r.name rname,r.tel tel,r.cardid cardid,br.state state from borrow br ,book b,reader r where state = #{arg0} and b.id = br.bookid and r.id = br.readerid limit #{arg1},#{arg2}
+    </select>
+
+    <select id="countByState" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(*) from borrow br ,book b,reader r where state = #{state} and b.id = br.bookid and r.id = br.readerid
+    </select>
+
+    <update id="handle">
+        update borrow set state = #{arg0},adminid = #{arg1} where id = #{arg2}
+    </update>
+</mapper>
